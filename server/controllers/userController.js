@@ -3,8 +3,9 @@ import ErrorHandler from '../middlewares/errorMiddlewares.js'
 import {User} from '../models/userModel.js'
 import bcrypt from 'bcrypt'
 import {v2 as cloudinary} from "cloudinary"
+
 export const getAllUsers = catchAsyncErrors(async(req,res,next)=>{
-    const users = await  User.find({accountVerified:ture});
+    const users = await User.find({accountVerified:true});
     res.status(200).json({
         success:true,
         users,
@@ -31,7 +32,7 @@ export const registerNewAdmin = catchAsyncErrors(async(req,res,next)=>{
     }
 
     const {avatar} = req.files;
-    const allowedFormats = ["image/png", "image.jpeg","image/webp"]
+    const allowedFormats = ["image/png", "image/jpeg","image/webp"]
     if(!allowedFormats.includes(avatar.mimetype)){
         return next(new ErrorHandler("File format not supported",400));
     }
@@ -44,5 +45,23 @@ export const registerNewAdmin = catchAsyncErrors(async(req,res,next)=>{
     );
     if(!cloudinaryResponse || cloudinaryResponse.error){
         console.error("Cloudinary error:",cloudinaryResponse.error || "Unknown cloudinary error")
+        return next(new ErrorHandler("Failed to upload avatar image to cloudinary",500))
     }
+    const admin = await User.create({
+        name,
+        email,
+        password:hashedPassword,
+        role:"Admin",
+        accountVerified:true,
+        avatar:{
+            public_id:cloudinaryResponse.public_id,
+            url : cloudinaryResponse.secure_url
+        }
+    })
+    res.status(201).json({
+        success:true,
+        message:"Admin registered successfully",
+        admin,
+
+    })
 });

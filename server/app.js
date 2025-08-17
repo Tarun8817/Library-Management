@@ -8,7 +8,11 @@ import authRouter from './routes/authRouter.js';
 import bookRouter from './routes/bookRouter.js';
 import borrowRouter from './routes/borrowRouter.js'
 import expressFileupload from 'express-fileupload'
+import userRouter from "./routes/userRouter.js"
+import { notifyUsers } from './services/notifyUser.js';
+import {removeUnverifiedAccounts} from './services/removeUnverifiedAccounts.js'
 config({ path: './config/config.env' });
+
 
 export const app = express();
 
@@ -38,9 +42,15 @@ app.use('/api/v1/books', bookRouter);
 app.use("/api/v1/borrow",borrowRouter);
 //httpd://localhost:4000/api/v1/
 
+app.use("/api/v1/user",userRouter);
+
+
+notifyUsers()
+removeUnverifiedAccounts()
+// Database connection
+connectDB();
 
 // Error Middleware (must be after routes)
 app.use(errorMiddleware);
 
-// Database connection
-connectDB();
+
