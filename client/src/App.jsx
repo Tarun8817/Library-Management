@@ -1,24 +1,41 @@
 import React from 'react'
-import {BrowserRouter as Router,Routes,Route} from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+
+// Importing all the pages
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import OTP from './pages/OTP';
-import ResetPassword from './pages/ForgotPassword';
-import {ToastContainer} from 'react-toastify'
+
+// Fixed: ResetPassword should be imported from its own file, not ForgotPassword
+import ResetPassword from './pages/ResetPassword';
+
+import { ToastContainer } from 'react-toastify'
+
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/register' element={<Register/>}/>
-        <Route path='/password/forgot' element={<ForgotPassword/>}/>
-        <Route path='/otp-verification/:email' element={<OTP/>}/>
-        <Route path='/password/reset/:token' element={<ResetPassword/>}/>
+        {/* Home Page */}
+        <Route path='/' element={<Home />} />
+
+        {/* Authentication pages */}
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+
+        {/* Forgot password process */}
+        <Route path='/password/forgot' element={<ForgotPassword />} />
+
+        {/* OTP verification with email in URL */}
+        <Route path='/otp-verification/:email' element={<OTP />} />
+
+        {/* Reset password using token from email */}
+        <Route path='/password/reset/:token' element={<ResetPassword />} />
       </Routes>
-      <ToastContainer theme='dark'/>
+
+      {/* Toast notifications (dark theme) */}
+      <ToastContainer theme='dark' />
     </Router>
   )
 }

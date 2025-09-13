@@ -2,8 +2,8 @@ import React from 'react'
 
 const AddNewAdmin = () => {
   return (
-    <div>
-      
+    <div className='z-20'>
+      Add new Admin
     </div>
   )
 }
