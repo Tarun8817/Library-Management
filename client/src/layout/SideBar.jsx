@@ -6,39 +6,42 @@ import bookIcon from "../assets/book.png";
 import catalogIcon from "../assets/catalog.png";
 import usersIcon from "../assets/people.png";
 import settingIcon from "../assets/setting-white.png";
+
+import { RiAdminFill } from "react-icons/ri"; // Icon for "Add Admin"
+
+// Redux imports
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { RiAdminFill } from "react-icons/ri";
-// Redux actions import
+import { toggleAddNewAdminPopup, toggleSettingPopup } from "../store/slices/popUpSlice";
 import { logout, resetAuthSlice } from "../store/slices/authSlice";
-import { toggleAddNewAdminPopup,toggleSettingsPopup} from "../store/slices/popUpSlice";
+
+import { toast } from "react-toastify";
 import AddNewAdmin from "../popups/AddNewAdmin";
 
 const SideBar = ({ isSideBarOpen, setSelectedComponent }) => {
   const dispatch = useDispatch();
 
-  // popup state redux se le rhe hai
+  // Popup state from Redux
   const { addNewAdminPopup } = useSelector((state) => state.popup);
 
-  // auth slice se values le rhe hai
+  // Auth state from Redux
   const { loading, error, message, user, isAuthenticated } = useSelector(
     (state) => state.auth
   );
 
-  // logout ke liye function
+  // Logout function
   const handleLogout = () => {
     dispatch(logout());
-  };   
+  };
 
-  // error ya success message show karne ke liye
+  // Show toast for error/success messages
   useEffect(() => {
     if (error) {
-      toast.error(error); // agar error aaya to toast show karo
-      dispatch(resetAuthSlice()); // error reset kar do redux se
+      toast.error(error); // Show error message
+      dispatch(resetAuthSlice()); // Clear error in Redux
     }
     if (message) {
-      toast.success(message); // agar success message hai to show karo
-      dispatch(resetAuthSlice()); // message reset kar do redux se
+      toast.success(message); // Show success message
+      dispatch(resetAuthSlice()); // Clear message in Redux
     }
   }, [dispatch, isAuthenticated, error, loading, message]);
 
@@ -53,16 +56,16 @@ const SideBar = ({ isSideBarOpen, setSelectedComponent }) => {
           md:translate-x-0
         `}
       >
-        {/* Sidebar ke top me logo */}
+        {/* Logo section */}
         <div className="px-6 py-4">
           <img src={logo_with_title} alt="logo" />
         </div>
 
-        {/* Navigation links */}
+        {/* Navigation section */}
         <nav className="flex-1 px-6 mt-6 space-y-2 overflow-y-auto">
           {/* Dashboard button */}
           <button
-            className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
+            className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
             onClick={() => setSelectedComponent("Dashboard")}
           >
             <img src={dashboardIcon} alt="icon" className="h-5 w-5" />
@@ -71,19 +74,19 @@ const SideBar = ({ isSideBarOpen, setSelectedComponent }) => {
 
           {/* Books button */}
           <button
-            className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
+            className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
             onClick={() => setSelectedComponent("Books")}
           >
             <img src={bookIcon} alt="icon" className="h-5 w-5" />
             <span>Books</span>
           </button>
 
-          {/* Admin role wale users ke liye options */}
+          {/* Admin-specific options */}
           {isAuthenticated && user?.role === "Admin" && (
             <>
               {/* Catalog button */}
               <button
-                className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
+                className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
                 onClick={() => setSelectedComponent("Catalog")}
               >
                 <img src={catalogIcon} alt="icon" className="h-5 w-5" />
@@ -92,16 +95,16 @@ const SideBar = ({ isSideBarOpen, setSelectedComponent }) => {
 
               {/* Users button */}
               <button
-                className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
+                className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
                 onClick={() => setSelectedComponent("Users")}
               >
                 <img src={usersIcon} alt="icon" className="h-5 w-5" />
                 <span>Users</span>
               </button>
 
-              {/* Add new admin popup open karne ke liye button */}
+              {/* Add new admin popup button */}
               <button
-                className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
+                className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
                 onClick={() => dispatch(toggleAddNewAdminPopup())}
               >
                 <RiAdminFill className="w-6 h-6" />
@@ -110,33 +113,32 @@ const SideBar = ({ isSideBarOpen, setSelectedComponent }) => {
             </>
           )}
 
-          {/* Normal user ke liye option */}
+          {/* User-specific option */}
           {isAuthenticated && user?.role === "User" && (
             <button
-              className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
+              className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
               onClick={() => setSelectedComponent("My Borrowed Books")}
             >
               <img src={catalogIcon} alt="icon" className="h-5 w-5" />
               <span>My Borrowed Books</span>
             </button>
           )}
-          {/* Common option jo sabko dikhna chahiye */}
+
+          {/* Update credentials (common for all users) */}
           <button
-            className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2"
-            onClick={()=> dispatch(toggleSettingsPopup())}
+            className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
+            onClick={() => dispatch(toggleSettingPopup())}
           >
             <img src={settingIcon} alt="icon" className="h-5 w-5" />
             <span>Update Credentials</span>
           </button>
         </nav>
 
-        {/* Sidebar ke bottom me logout button */}
+        {/* Logout button at bottom */}
         <div className="px-6 py-4 border-t border-gray-700">
           <button
             onClick={handleLogout}
-            className="py-2 font-medium text-center bg-transparent 
-            rounded-md hover:cursor-pointer 
-            flex items-center justify-center space-x-2 w-full"
+            className="w-full py-2 flex items-center justify-center space-x-2 font-medium hover:cursor-pointer"
           >
             <img src={logoutIcon} alt="icon" className="h-5 w-5" />
             <span>Log Out</span>
@@ -144,7 +146,7 @@ const SideBar = ({ isSideBarOpen, setSelectedComponent }) => {
         </div>
       </aside>
 
-      {/* Add New Admin wala popup, agar true hoga to render karega */}
+      {/* Render Add New Admin popup if open */}
       {addNewAdminPopup && <AddNewAdmin />}
     </>
   );

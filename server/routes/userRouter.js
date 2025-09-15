@@ -4,10 +4,25 @@ import { isAuthenticated, isAuthorized } from "../middlewares/authMiddleware.js"
 
 const router = express.Router();
 
-// Protected: Only Admins can fetch all users
-router.get("/all", isAuthenticated, isAuthorized("Admin"), getAllUsers);
+// ----------------------------------------
+// USER MANAGEMENT ROUTES
+// ----------------------------------------
 
-// Public: Register a new Admin (remove auth for first-time registration)
+// Get all verified users
+// Endpoint: GET /all
+// Access: Admin only (protected by isAuthenticated + isAuthorized)
+// Returns a list of all users who have verified their accounts
+router.get("/all", 
+    isAuthenticated, 
+    isAuthorized("Admin"), 
+    getAllUsers
+);
+
+// Register a new Admin
+// Endpoint: POST /add/new-admin
+// Access: Public for first-time registration (authentication can be skipped)
+// Body: { name, email, password, avatar }
+// Uploads avatar to Cloudinary, hashes password, and creates a new Admin account
 router.post("/add/new-admin", registerNewAdmin);
 
 export default router;
