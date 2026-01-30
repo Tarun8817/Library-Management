@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+client/node_modules
+server/node_modules
+server/config
+=======
 # Logs
 logs
 *.log
@@ -22,3 +27,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+>>>>>>> 0a0fd98 (Added Comment for the entire backend and for some part of the frontend)
