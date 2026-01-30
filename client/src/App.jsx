@@ -1,5 +1,5 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import React, { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route,Link,Navigate } from "react-router-dom"
 
 // Importing all the pages
 import Home from './pages/Home';
@@ -12,14 +12,38 @@ import OTP from './pages/OTP';
 import ResetPassword from './pages/ResetPassword';
 
 import { ToastContainer } from 'react-toastify'
+import { useDispatch, useSelector } from 'react-redux';
+import { getUser, silentGetUser } from './store/slices/authSlice';
+import { fetchAllUsers } from './store/slices/userSlice';
+import { fetchAllBooks } from './store/slices/bookSlice';
 
 const App = () => {
+  const {user,isAuthenticated} = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUser());
+    dispatch(fetchAllBooks())
+    // Fetch admin data only when user is authenticated and is admin
+    if (isAuthenticated && user?.role === "Admin") {
+      console.log("THE LOGGED IN USER IS AN ADMIN");
+      dispatch(fetchAllUsers());
+    }
+  }, [isAuthenticated]);
+
+  
+  // Create a protected route component
+  const ProtectedRoute = ({ children }) => {
+    return isAuthenticated ? children : <Navigate to="/login" />;
+  };
+
+
+
   return (
     <Router>
       <Routes>
-        {/* Home Page */}
-        <Route path='/' element={<Home />} />
-
+        {/* Protected Home Page */}
+        <Route path='/' element={<Home/>}/>
         {/* Authentication pages */}
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
@@ -32,6 +56,9 @@ const App = () => {
 
         {/* Reset password using token from email */}
         <Route path='/password/reset/:token' element={<ResetPassword />} />
+
+        {/* 404 Route - Must be last */}
+        <Route path='*' element={<Navigate to="/" />} />
       </Routes>
 
       {/* Toast notifications (dark theme) */}

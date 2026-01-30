@@ -5,8 +5,6 @@ export const connectDB = () => {
     mongoose
         .connect(process.env.MONGO_URI, {
             dbName: "MERN_Stack_Lib_Management", // Database name
-            useNewUrlParser: true, // (optional) ensures new parser is used
-            useUnifiedTopology: true, // (optional) removes deprecation warnings
         })
         .then((data) => {
             console.log(`✅ MongoDB connected: ${data.connection.host}`);

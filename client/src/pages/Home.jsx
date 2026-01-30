@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import Sidebar from "../layout/SideBar";
+import SideBar from "../layout/SideBar";
 import UserDashboard from "../components/UserDashboard";
 import AdminDashboard from "../components/AdminDashboard";
 import BookManagement from "../components/BookManagement";
@@ -69,7 +69,7 @@ const Home = () => {
       </div>
 
       {/* -------------------- SIDEBAR -------------------- */}
-      <Sidebar
+      <SideBar
         isSideBarOpen={isSideBarOpen}
         setIsSideBarOpen={setIsSideBarOpen}
         setSelectedComponent={setSelectedComponent}

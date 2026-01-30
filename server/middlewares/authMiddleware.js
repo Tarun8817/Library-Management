@@ -5,7 +5,16 @@ import { User } from "../models/userModel.js";
 
 // ------------------- AUTHENTICATION -------------------
 export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
-    const { token } = req.cookies; // ✅ JWT stored in cookies
+    // ✅ Try to get token from cookies OR Authorization header
+    let token = req.cookies?.token || null;
+    
+    // If no token in cookies, check Authorization header
+    if (!token && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith("Bearer ")) {
+            token = authHeader.split(" ")[1];
+        }
+    }
 
     // If no token → user not logged in
     if (!token) {
@@ -16,8 +25,6 @@ export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
         // Verify JWT using secret key
         const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-        console.log("✅ Decoded Data:", decodedData);
-
         // Attach user object to request for future use
         req.user = await User.findById(decodedData.id);
 
@@ -27,6 +34,7 @@ export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
 
         next();
     } catch (error) {
+        console.error("Auth Error:", error.message);
         return next(new ErrorHandler("Invalid or expired token", 401));
     }
 });

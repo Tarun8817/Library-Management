@@ -6,6 +6,7 @@ import { useNavigate, Navigate, Link } from "react-router-dom"
 import { register, resetAuthSlice } from "../store/slices/authSlice"
 import { toast } from 'react-toastify'
 import logo_with_title from '../assets/logo-with-title.png'
+import new_logo from "../assets/Logo_signup.png"
 
 const Register = () => {
   // Local states to store form input values
@@ -84,8 +85,8 @@ const Register = () => {
             
             {/* Logo + Title */}
             <div className="flex flex-col items-center mb-12">
-              <img src={logo} alt="logo" className="h-auto w-24 object-cover mb-4"/>
-              <h3 className="text-xl font-semibold">Sign Up</h3>
+              <img src={logo} alt="logo" className="h-auto w-30 object-cover mb-4"/>
+              <h3 className="text-2xl mb-[10px] font-semibold">Sign Up</h3>
             </div>
 
             <p className="text-gray-800 text-center mb-8">
@@ -141,7 +142,7 @@ const Register = () => {
               {/* Submit button */}
               <button
                 type="submit"
-                className="border-2 mt-5 border-black w-full font-semibold bg-black text-white py-2 rounded-lg hover:bg-white hover:text-black transition"
+                className="border-2 text-2xl border-black w-full font-semibold bg-black text-white py-2  rounded-lg hover:bg-white hover:text-black transition"
               >
                 SIGN UP
               </button>

@@ -2,6 +2,21 @@ import nodemailer from 'nodemailer';
 
 export const sendEmail = async (toEmail, subject, message) => {
     try {
+        // Validate required parameters
+        if (!toEmail) {
+            throw new Error('No recipients defined - toEmail is required');
+        }
+        if (!subject) {
+            throw new Error('Subject is required');
+        }
+        if (!message) {
+            throw new Error('Message content is required');
+        }
+
+        // Validate environment variables
+        if (!process.env.EMAIL_MAIL || !process.env.EMAIL_PASS) {
+            throw new Error('Email configuration missing - check EMAIL_MAIL and EMAIL_PASS environment variables');
+        }
         // Create a transporter object using SMTP settings
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -24,7 +39,7 @@ export const sendEmail = async (toEmail, subject, message) => {
 
         // Send email
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully:', info.response);
+        console.log('Email sent successfully to:', toEmail);
 
         return info;
     } catch (error) {

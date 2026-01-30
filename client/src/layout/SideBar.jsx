@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import logo_with_title from "../assets/logo-with-title.png";
 import logoutIcon from "../assets/logout.png";
 import dashboardIcon from "../assets/element.png";
@@ -12,19 +12,19 @@ import { RiAdminFill } from "react-icons/ri"; // Icon for "Add Admin"
 // Redux imports
 import { useDispatch, useSelector } from "react-redux";
 import { toggleAddNewAdminPopup, toggleSettingPopup } from "../store/slices/popUpSlice";
-import { logout, resetAuthSlice } from "../store/slices/authSlice";
+import { logout, clearMessages } from "../store/slices/authSlice";
 
 import { toast } from "react-toastify";
 import AddNewAdmin from "../popups/AddNewAdmin";
-
+import SettingPopup from "../popups/SettingPopup";
 const SideBar = ({ isSideBarOpen, setSelectedComponent }) => {
   const dispatch = useDispatch();
 
   // Popup state from Redux
-  const { addNewAdminPopup } = useSelector((state) => state.popup);
+  const { addNewAdminPopup , settingPopup } = useSelector((state) => state.popup);
 
   // Auth state from Redux
-  const { loading, error, message, user, isAuthenticated } = useSelector(
+  const { error, message, user, isAuthenticated } = useSelector(
     (state) => state.auth
   );
 
@@ -37,13 +37,13 @@ const SideBar = ({ isSideBarOpen, setSelectedComponent }) => {
   useEffect(() => {
     if (error) {
       toast.error(error); // Show error message
-      dispatch(resetAuthSlice()); // Clear error in Redux
+      dispatch(clearMessages()); // Clear only messages, not auth state
     }
     if (message) {
       toast.success(message); // Show success message
-      dispatch(resetAuthSlice()); // Clear message in Redux
+      dispatch(clearMessages()); // Clear only messages, not auth state
     }
-  }, [dispatch, isAuthenticated, error, loading, message]);
+  }, [dispatch, error, message]);
 
   return (
     <>
@@ -148,6 +148,7 @@ const SideBar = ({ isSideBarOpen, setSelectedComponent }) => {
 
       {/* Render Add New Admin popup if open */}
       {addNewAdminPopup && <AddNewAdmin />}
+      {settingPopup && <SettingPopup/>}
     </>
   );
 };

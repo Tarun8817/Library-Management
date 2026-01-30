@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import userIcon from '../assets/user.png'
-import settingIcon from '../assets/setting-white.png' 
+import settingIcon from '../assets/setting.png' 
 import { toggleSettingPopup } from '../store/slices/popUpSlice'
 
 const Header = () => {
@@ -28,7 +28,7 @@ const Header = () => {
     };
 
     updateDateTime();
-    const intervalId = setInterval(updateDateTime, 1000); // ⏱ updates every second
+    const intervalId = setInterval(updateDateTime, 1000); // updates every second
 
     return () => clearInterval(intervalId); // cleanup on unmount
   }, []);
@@ -64,7 +64,7 @@ const Header = () => {
           src={settingIcon}
           alt="settingIcon"
           className="w-8 h-8 cursor-pointer"
-          onClick={() => dispatch(toggleSettingPopup())} // ✅ dispatch added
+          onClick={() => dispatch(toggleSettingPopup())} 
         />
       </div>
     </header>

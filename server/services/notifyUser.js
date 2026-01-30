@@ -4,8 +4,8 @@ import { sendEmail } from "../utils/sendEmail.js";
 import { Borrow } from "../models/borrowModel.js";
 
 export const notifyUsers = () => {
-  // Schedule the task to run every 30 seconds
-  cron.schedule("*/30 * * * * *", async () => {
+  // Schedule the task to run every day at 9:00 AM
+  cron.schedule("0 9 * * *", async () => {
     try {
       // Calculate the date/time 1 day ago from now
       const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -19,19 +19,26 @@ export const notifyUsers = () => {
 
       // Loop through all borrowers to send email reminders
       for (const element of borrowers) {
-        if (element.user && element.user.email) {
-          const user = await User.findById(element.user.id);
+        try {
+          // Populate user data if not already populated
+          const borrowRecord = await Borrow.findById(element._id).populate('user');
+          
+          if (borrowRecord.user && borrowRecord.user.email) {
+            // Send reminder email with correct parameter format
+            await sendEmail(
+              borrowRecord.user.email, 
+              "Book Return Reminder",
+              `<p>Hello ${borrowRecord.user.name},</p><p>This is a reminder that the book you borrowed is overdue for return. Please return it as soon as possible to avoid additional fines.</p><p>Thank you!</p>`
+            );
 
-          // Send reminder email
-          await sendEmail({
-            email: element.user.email, 
-            subject: "Book Return Reminder",
-            message: `Hello ${element.user.name}, \n\nThis is a reminder that the book you borrowed is due for return today.`,
-          });
-
-          // Mark this borrow record as notified
-          element.notified = true;
-          await element.save();
+            // Mark this borrow record as notified
+            borrowRecord.notified = true;
+            await borrowRecord.save();
+            
+            console.log(`Notification sent to ${borrowRecord.user.email}`);
+          }
+        } catch (emailError) {
+          console.error(`Failed to send notification for borrow ID ${element._id}:`, emailError.message);
         }
       }
     } catch (error) {
